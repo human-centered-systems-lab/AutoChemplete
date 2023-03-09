@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %} Labelling {{ model.resource_url.path }}{% endblock %}
+{% block head %}
+{{ super() }}
+<script defer src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/kekule/kekule.min.js') }}""></script>
+    <link rel=" stylesheet" type="text/css"
+    href="{{ url_for('static', filename='js/vendor/kekule/themes/default/kekule.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}" />
+<script>var initialMolecule = "{{ model.chemical_representation }}";</script>
+<script>
+    {% if checkSimilarMols %}
+    let checkSimilarMols = true;
+    {% else %}
+    let checkSimilarMols = false;
+    {% endif %}
+    {% if checkAutocompletions %}
+    let checkAutocompletions = true;
+    {% else %}
+    let checkAutocompletions = false;
+    {% endif %}
+    let imageSrc = "{{ model.resource_url }}";
+    let sessionId = "{{ sessionId }}";
+    let taskId = "{{ taskId }}";
+</script>
+{% endblock %}
+{% block content %}
+<div id="root"></div>
+{% endblock %}

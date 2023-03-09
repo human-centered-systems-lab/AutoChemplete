@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "autochemplete"
+version = "1.0.0"
+description = ""
+authors = ["anon <anon@anon.edu>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Flask = "^2.0.0"
+pydantic = "^1.8.2"
+"epam.indigo" = "^1.4.3"
+PubChemPy = "^1.0.4"
+redis = "^4.1.4"
+alembic = "^1.8.0"
+psycopg2 = "^2.9.3"
+Flask-SQLAlchemy = "^2.5.1"
+SQLAlchemy = "^1.4.39"
+gunicorn = "^20.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+snakeviz = "^2.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %} Enter label info{% endblock %}
+{% block content %}
+    <form action="label" method="GET">
+        <label for="url_resource">URL to resource to be labelled</label>
+        <input name="resource_url" required id="url_resource"" type="text" />
+        <label for="chem_rep">Chemical representation (SMILES)</label>
+        <input name="chemical_representation" id="chem_rep" type="text" />
+        <label>Output URL</label>
+        <input name="target_url" id="target_url" type="url" />
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

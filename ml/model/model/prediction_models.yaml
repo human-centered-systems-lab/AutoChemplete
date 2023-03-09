@@ -1,0 +1,123 @@
+# This .yaml file for "ensemble test"
+# each models are used for ensemble
+
+#'''
+#Training Dataset: lg+PubChem1M+ChEMBL75+RDKit_clear: 908765+983300+1861548+885827
+#length <= 75
+#E0+6TFE+6TFD
+#path: /home/anon/results_training/multi_lg+pubchem+chembl+rdkitclear/E0+6TFE+6TFD/graph_save/
+  #model-emb_dim_512-attention_dim_512-decoder_dim_512-dropout_0.5-batch_size_512/encoder9.pkl decoder9.pkl
+#change name into encoder1.pkl decoder1.pkl
+#'''
+#model1:
+#  emb_dim: 512
+#  attention_dim: 512
+#  decoder_dim: 512
+#  encoder_type: efficientnetB0
+#  tf_encoder: 6
+#  tf_decoder: 6
+#  load_model_path: /home/anon/results_training/multi_lg+pubchem+chembl+rdkitclear/E0+6TFE+6TFD/graph_save/model-emb_dim_512-attention_dim_512-decoder_dim_512-dropout_0.5-batch_size_512
+#  load_model_num: 9
+#  reverse_token_map: /org/temp/anon/data/lg_PubChem1M_ChEMBL75_RDkitclear/input_data/REVERSED_TOKENMAP_seed_123_max75smiles.json
+
+
+model1:
+  emb_dim: 512
+  attention_dim: 512
+  decoder_dim: 512
+  encoder_type: efficientnetB0
+  tf_encoder: 6
+  tf_decoder: 6
+  #load_model_path: /org/temp/anon/data/model/multi_model/model_path/
+  load_model_path: ./multi-model_path/
+  load_model_num: 1
+  reverse_token_map: ./reversed_token_map/REVERSED_TOKENMAP_1.json
+  #reverse_token_map: /org/temp/anon/data/model/multi_model/reversed_token_map/REVERSED_TOKENMAP_1.json
+  #/org/temp/anon/data/lg_PubChem1M_ChEMBL75_RDkitclear/input_data/REVERSED_TOKENMAP_seed_123_max75smiles.json->REVERSED_TOKENMAP_1.json
+
+#'''
+#Training Dataset: lg+PubChem+RDKit_clear+RDKit_noise: 908765+903728+885827+885827
+#length <= 75
+#E0+2TFE+LSTM
+#path: /home/anon/results_training/multi_lg+pubchem+rdkitclear_noise/E0+2TFE+LSTM/graph_save/model-emb_dim_512
+  #-attention_dim_512-decoder_dim_512-dropout_0.5-batch_size_512/decoder16.pkl
+#change name into encoder2.pkl decoder2.pkl
+#'''
+model2:
+  emb_dim: 512
+  attention_dim: 512
+  decoder_dim: 512
+  encoder_type: efficientnetB0
+  tf_encoder: 2
+  tf_decoder: 0
+  #load_model_path: /org/temp/anon/data/model/multi_model/model_path/
+  load_model_path: ./multi-model_path/
+  load_model_num: 2
+  reverse_token_map: ./reversed_token_map/REVERSED_TOKENMAP_2.json
+  #reverse_token_map: /org/temp/anon/data/model/multi_model/reversed_token_map/REVERSED_TOKENMAP_2.json
+ #/org/temp/anon/data/lg_PubChem1M_RDkitclear_noise/input_data/REVERSED_TOKENMAP_seed_123_max75smiles.json
+
+#'''
+#Training Dataset: lg+PubChem+RDKit_clear+RDKit_noise: 908765+903728+885827+885827
+#length <= 75
+#E0+6TFE+6TFD
+#path: /home/anon/results_training/multi_lg+pubchem+rdkitclear_noise/E0+6TFE+6TFD/graph_save/model-emb_dim_512-a
+  #ttention_dim_512-decoder_dim_512-dropout_0.5-batch_size_512/encoder11.pkl
+  #change name into encoder3.pkl decoder3.pkl
+#'''
+model3:
+  emb_dim: 512
+  attention_dim: 512
+  decoder_dim: 512
+  encoder_type: efficientnetB0
+  tf_encoder: 6
+  tf_decoder: 6
+  load_model_path: ./multi-model_path/
+  load_model_num: 3
+  reverse_token_map: ./reversed_token_map/REVERSED_TOKENMAP_2.json
+#
+#
+#
+#'''
+#Training Dataset: lg+PubChem+RDKit_clear: 908765+903728+885828
+#length <= 75
+#E0+2TFE+LSTM
+#path: /home/anon/results_training/multi_lg+pubchem+rdkitclear/E0+2TFE+LSTM/graph_save/model-emb_dim_512-attent
+  #ion_dim_512-decoder_dim_512-dropout_0.5-batch_size_512/encoder12.pkl
+  #change name into encoder4.pkl decoder4.pkl
+#'''
+model4:
+  emb_dim: 512
+  attention_dim: 512
+  decoder_dim: 512
+  encoder_type: efficientnetB0
+  tf_encoder: 2
+  tf_decoder: 0
+  load_model_path: ./multi-model_path/
+  load_model_num: 4
+  reverse_token_map: ./reversed_token_map/REVERSED_TOKENMAP_4.json
+  #reverse_token_map: /org/temp/anon/data/model/multi_model/reversed_token_map/REVERSED_TOKENMAP_4.json
+  #/org/temp/anon/data/lg_PubChem1M_RDkitclear/input_data/REVERSED_TOKENMAP_seed_123_max75smiles.json
+#
+#
+#'''
+#Training Dataset: lg+PubChem: 908765+983300
+#length <= 100
+#E0+2TFE+LSTM
+#path: /home/anon/results_training/multi_lg+pubchem_100/E0+2TFE+LSTM/graph_save/model-emb_dim_512-attention_dim_
+  #512-decoder_dim_512-dropout_0.5-batch_size_512/decoder8.pkl
+  #change name into encoder5.pkl decoder5.pkl
+#'''
+model5:
+  emb_dim: 512
+  attention_dim: 512
+  decoder_dim: 512
+  encoder_type: efficientnetB0
+  tf_encoder: 2
+  tf_decoder: 0
+  load_model_path: ./multi-model_path/
+  load_model_num: 5
+  reverse_token_map: ./reversed_token_map/REVERSED_TOKENMAP_5.json
+  #reverse_token_map: /org/temp/anon/data/model/multi_model/reversed_token_map/REVERSED_TOKENMAP_5.json
+  #/org/temp/anon/data/lg_PubChem1M_100/input_data/REVERSED_TOKENMAP_seed_123_max100smiles.json
+

@@ -1,0 +1,21 @@
+.sidebyside {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+#similar-molecules {
+  display: flex;
+  justify-content: center;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,37 @@
+{
+  "name": "autochemplete-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watch 'npm run build' ./"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-react": "^7.14.5",
+    "babel-loader": "^8.2.2",
+    "babel-polyfill": "^6.26.0",
+    "watch": "^0.13.0",
+    "webpack": "^5.43.0",
+    "webpack-cli": "^4.7.2"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.0",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "js-levenshtein": "^1.1.6",
+    "lodash": "^4.17.21",
+    "material-ui-snackbar-provider": "^1.5.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
