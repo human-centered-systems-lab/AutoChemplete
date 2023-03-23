@@ -1,0 +1,74 @@
+name: autochemplete-ml
+channels:
+- defaults
+- conda-forge
+dependencies:
+- blas=1.0
+- brotlipy=0.7.*
+- bzip2=1.0.*
+- ca-certificates=2023.01.*
+- certifi=2022.12.*
+- cffi=1.15.*
+- charset-normalizer=2.0.*
+- click=8.0.*
+- cryptography=39.0.*
+- flask=2.2.*
+- flit-core=3.6.*
+- freetype=2.12.*
+- future=0.18.*
+- giflib=5.2.*
+- idna=3.4
+- itsdangerous=2.0.*
+- jinja2=3.1.*
+- jpeg=9e
+- lcms2=2.12
+- lerc=3.0
+- libcxx=14.0.*
+- libdeflate=1.17
+- libffi=3.4.*
+- libopenblas=0.3.*
+- libpng=1.6.*
+- libprotobuf=3.20.*
+- libtiff=4.5.*
+- libuv=1.44.*
+- libwebp=1.2.*
+- libwebp-base=1.2.*
+- llvm-openmp=14.0.*
+- lz4-c=1.9.*
+- markupsafe=2.1.*
+- ncurses=6.4
+- ninja=1.10.*
+- ninja-base=1.10.*
+- numpy=1.23.*
+- numpy-base=1.23.*
+- openssl=1.1.*
+- pillow=9.4.*
+- pip=23.0.*
+- pycparser=2.21
+- pyopenssl=23.0.*
+- pysocks=1.7.*
+- python=3.10.*
+- pytorch=1.12.*
+- pyyaml=6.0
+- readline=8.2
+- requests=2.28.*
+- setuptools=65.6.*
+- sleef=3.5.*
+- sqlite=3.41.*
+- tk=8.6.*
+- torchvision=0.13.*
+- typing-extensions=4.4.*
+- typing_extensions=4.4.*
+- tzdata=2022g
+- urllib3=1.26.*
+- werkzeug=2.2.*
+- wheel=0.38.*
+- xz=5.2.*
+- yaml=0.2.*
+- zlib=1.2.*
+- zstd=1.5.*
+- pip:
+  - epam-indigo==1.9.*
+  - mol2chemfigpy3==1.5.*
+  - pubchempy==1.0.*
+  - rdkit==2022.9.*
