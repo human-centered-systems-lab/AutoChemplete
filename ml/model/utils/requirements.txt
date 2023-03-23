@@ -3,19 +3,19 @@ cycler==0.10.0
 decorator==4.4.2
 efficientnet-pytorch==0.7.0
 future==0.18.2
-h5py @ file:///tmp/build/80754af9/h5py_1593454121459/work
+h5py
 imageio==2.9.0
 joblib==0.16.0
 kiwisolver==1.2.0
-matplotlib @ file:///tmp/build/80754af9/matplotlib-base_1597876339545/work
+matplotlib
 mkl-fft==1.1.0
 mkl-random==1.1.1
 mkl-service==2.3.0
 networkx==2.5
-numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1596233737064/work
+numpy
 olefile==0.46
-pandas @ file:///tmp/build/80754af9/pandas_1598371470623/work
-Pillow @ file:///tmp/build/80754af9/pillow_1594307298074/work
+pandas
+Pillow
 pyparsing==2.4.7
 python-dateutil==2.8.1
 pytz==2020.1
