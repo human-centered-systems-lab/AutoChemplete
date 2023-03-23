@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import Dataset
 import h5py
 import json
-import os
 from PIL import Image
 import numpy as np
 import torchvision.transforms as transforms
@@ -82,7 +81,6 @@ class PNGSmileDataset(SmilesDataset):
 
         # Open hdf5 file where images are stored
         if self.split in {'TRAIN', 'VAL'}:
-            # self.h = h5py.File(data_folder/ f"{self.split}_IMAGES_{base_file_name}.hdf5", 'r')
             self.img_list = torch.load(data_folder / f"{self.split}_IMAGES_{base_file_name}.pt")
 
             # Load encoded sequences (completely into memory)
@@ -98,8 +96,6 @@ class PNGSmileDataset(SmilesDataset):
         else:  # self.split in {'TEST'}
             self.h = h5py.File(data_folder / "TEST_LG_IMAGES.hdf5", 'r')
 
-        # self.imgs = self.h['images']
-
         # PyTorch transformation pipeline for the image (normalizing, etc.)
         self.transform = transform
         self.dataset_size = len(self.img_list)
@@ -114,12 +110,7 @@ class PNGSmileDataset(SmilesDataset):
 
         img = Image.open(img_path)
         img = self.png_to_tensor(img)
-        # img = img.resize((256, 256))
-        # img = np.array(img)
-        # # img:(width， height， channel)
-        # img = np.rollaxis(img, 2, 0)
-        #
-        # img = torch.FloatTensor(img / 255.)
+
         if self.transform is not None:
             img = self.transform(img)
 
@@ -146,9 +137,6 @@ class PNGSmileDataset(SmilesDataset):
         img = img.resize((256,256))
         img = np.array(img)
 
-        # what is the dimension of img?
-        # (
-        #print(img.ndim)
         if img.ndim == 3:
             img = np.moveaxis(img, 2, 0) # this function moves the final axis to the first
             # it means that the img can be [256, 256, 3]  -> [3, 256, 256] #[N C H W] is right

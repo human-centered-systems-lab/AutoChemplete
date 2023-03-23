@@ -2,22 +2,11 @@ import torch
 import math
 import torch.nn.functional as F
 import torch.nn as nn
-import numpy as np
-from time import time
 
 
-# LSTM = long short term memory recurrent neural nets
-# there are many implementations of LSTMs, why?
-# - people want to try different variations, for example multiplicative LSTM, or convolutional LSTM
-# - the "default" LSTMs in pytorch or tensorflow is VERY SLOW, and other people can make it run faster
-# now everyone uses nn.LSTM because:
-# - people are not interested in LSTM anymore
-# - the default LSTM has been implemented well (as fast as the previous fast versions)
-# - it takes years for the developers to finalize an implementation of LSTM to satisfy the users
-
-
-def scale_dot_product_attention(q, k, v, scale=1.0, heads=8,
-                                time_mask=None, pad_mask=None):
+def scale_dot_product_attention(
+    q, k, v, scale=1.0, heads=8, time_mask=None, pad_mask=None
+):
     # the inputs of dot product attention is
     # matrix Q: size [B x Tq x H]: translates to T time steps, each timestep has a batch of B vectors of size H
     # or you can also see it as: B sequences, each sequence has T time steps, each time step is a vector size H
@@ -60,18 +49,17 @@ def scale_dot_product_attention(q, k, v, scale=1.0, heads=8,
         # it means that for every element in the sentence (len_q), we store a score for every pixel in the input (len_k)
         # and we need to store B times (batch size) but also we need to store additionally H times (head size)
         # because each attention is divided into H heads.
-        # print("Using time mask ...")
-        # print(time_mask)
 
         time_mask = time_mask.unsqueeze(0)
-        #print("time_mask.shape",time_mask)
         attn_score = attn_score.masked_fill_(time_mask.bool(), -10000)
         #
 
     if pad_mask is not None:
         bsz = attn_score.size(0) // heads
         pad_mask = pad_mask.unsqueeze(1).unsqueeze(2)
-        attn_score = attn_score.view(bsz, heads, attn_score.size(1), attn_score.size(2)).masked_fill_(pad_mask, -999999)
+        attn_score = attn_score.view(
+            bsz, heads, attn_score.size(1), attn_score.size(2)
+        ).masked_fill_(pad_mask, -999999)
         # the reason is that the pad_mask dimension is [bsz x len_k]
         # so by viewing, we can use the "broadcasting" feature of PyTorch to
         # mask [bsz x len_k] -> repeated into [bsz, heads, len_q, len_k]
@@ -96,7 +84,6 @@ def scale_dot_product_attention(q, k, v, scale=1.0, heads=8,
 
 # implements MultiHeadAttention
 class MultiHeadSelfAttention(nn.Module):
-
     def __init__(self, model_size, n_heads):
         super(MultiHeadSelfAttention, self).__init__()
 
@@ -117,7 +104,7 @@ class MultiHeadSelfAttention(nn.Module):
     # -> we don't need a mask
     # if we batch different sequences and we have to add pads so they have the same size
     # -> we need a mask so that we don't pay attention to the padded positions
-    def forward(self, x, impl='fast', pad_mask=None, time_mask=None):
+    def forward(self, x, impl="fast", pad_mask=None, time_mask=None):
         # x size: [T x B x model_size]
         # T is the number of pixels (W x H) after the efficient net (for example 16 x 16 = 256)
         # B is the batch size
@@ -134,31 +121,46 @@ class MultiHeadSelfAttention(nn.Module):
         v = v.view(t, b, self.n_heads, self.head_dim)
 
         # this is the slow way
-        if impl == 'slow':
+        if impl == "slow":
             outputs = list()
             for head in range(self.n_heads):
                 q_head = q[:, :, head, :]
                 k_head = k[:, :, head, :]
                 v_head = v[:, :, head, :]
 
-                output_head = scale_dot_product_attention(q_head, k_head, v_head, scale=scale,
-                                                          heads=self.n_heads, pad_mask=pad_mask, time_mask=time_mask)
+                output_head = scale_dot_product_attention(
+                    q_head,
+                    k_head,
+                    v_head,
+                    scale=scale,
+                    heads=self.n_heads,
+                    pad_mask=pad_mask,
+                    time_mask=time_mask,
+                )
                 outputs.append(output_head)
 
-            output = torch.cat(outputs, dim=-1).view(b, t, self.model_size)  # [T x B*head x head_dim]
+            output = torch.cat(outputs, dim=-1).view(
+                b, t, self.model_size
+            )  # [T x B*head x head_dim]
             output = output.transpose(0, 1).contiguous()
             output = self.linear_out(output)
 
             return output
 
-        elif impl == 'fast':
-
+        elif impl == "fast":
             q = q.view(t, b * self.n_heads, self.head_dim)
             k = k.view(t, b * self.n_heads, self.head_dim)
             v = v.view(t, b * self.n_heads, self.head_dim)
 
-            output = scale_dot_product_attention(q, k, v, scale=scale, heads=self.n_heads,
-                                                 pad_mask=pad_mask, time_mask=time_mask)
+            output = scale_dot_product_attention(
+                q,
+                k,
+                v,
+                scale=scale,
+                heads=self.n_heads,
+                pad_mask=pad_mask,
+                time_mask=time_mask,
+            )
             output = output.transpose(0, 1).contiguous().view(t, b, self.model_size)
             output = self.linear_out(output)
 
@@ -166,8 +168,7 @@ class MultiHeadSelfAttention(nn.Module):
 
 
 class MultiHeadCrossAttention(MultiHeadSelfAttention):
-
-    def forward(self, x, encoder_output, impl='fast', pad_mask=None):
+    def forward(self, x, encoder_output, impl="fast", pad_mask=None):
         # x size: [T x B x model_size]
         # T is the number of pixels (W x H) after the efficient net (for example 16 x 16 = 256)
         # B is the batch size
@@ -185,31 +186,46 @@ class MultiHeadCrossAttention(MultiHeadSelfAttention):
         v = v.view(len_k, b, self.n_heads, self.head_dim)
 
         # this is the slow way
-        if impl == 'slow':
+        if impl == "slow":
             outputs = list()
             for head in range(self.n_heads):
                 q_head = q[:, :, head, :]
                 k_head = k[:, :, head, :]
                 v_head = v[:, :, head, :]
 
-                output_head = scale_dot_product_attention(q_head, k_head, v_head, scale=scale, heads=self.n_heads,
-                                                          pad_mask=pad_mask, time_mask=None)
+                output_head = scale_dot_product_attention(
+                    q_head,
+                    k_head,
+                    v_head,
+                    scale=scale,
+                    heads=self.n_heads,
+                    pad_mask=pad_mask,
+                    time_mask=None,
+                )
                 outputs.append(output_head)
 
-            output = torch.cat(outputs, dim=-1).view(b, t, self.model_size)  # [T x B*head x head_dim]
+            output = torch.cat(outputs, dim=-1).view(
+                b, t, self.model_size
+            )  # [T x B*head x head_dim]
             output = output.transpose(0, 1).contiguous()
             output = self.linear_out(output)
 
             return output
 
-        elif impl == 'fast':
-
+        elif impl == "fast":
             q = q.view(t, b * self.n_heads, self.head_dim)
             k = k.view(len_k, b * self.n_heads, self.head_dim)
             v = v.view(len_k, b * self.n_heads, self.head_dim)
 
-            output = scale_dot_product_attention(q, k, v, scale=scale, heads=self.n_heads,
-                                                 pad_mask=pad_mask, time_mask=None)
+            output = scale_dot_product_attention(
+                q,
+                k,
+                v,
+                scale=scale,
+                heads=self.n_heads,
+                pad_mask=pad_mask,
+                time_mask=None,
+            )
             output = output.transpose(0, 1).contiguous().view(t, b, self.model_size)
             output = self.linear_out(output)
 
@@ -218,7 +234,6 @@ class MultiHeadCrossAttention(MultiHeadSelfAttention):
 
 # implements Transformer Encoder Layer
 class TransformerEncoderLayer(nn.Module):
-
     def __init__(self, model_size=512, n_heads=8, dropout=0.1):
         # have to call super init first to initialize the PyTorch module
         # (it means that PyTorch will understand that this is a network part and register the parmaters)
@@ -259,7 +274,7 @@ class TransformerEncoderLayer(nn.Module):
         self.self_attn = MultiHeadSelfAttention(self.model_size, self.n_heads)
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, x, impl='fast'):
+    def forward(self, x, impl="fast"):
         # x size should be [T x B x H]
 
         # first block
@@ -304,11 +319,15 @@ class TransformerDecoderLayer(nn.Module):
         # before each component we have layer norm and after each component we have dropout + residual
 
         # self-attention between decoder states
-        self.self_attn_norm = nn.LayerNorm(model_size, eps=1e-05, elementwise_affine=True)
+        self.self_attn_norm = nn.LayerNorm(
+            model_size, eps=1e-05, elementwise_affine=True
+        )
         self.self_attn = MultiHeadSelfAttention(self.model_size, self.n_heads)
 
         # attn between decoder states and encoder states
-        self.cross_attn_norm = nn.LayerNorm(model_size, eps=1e-05, elementwise_affine=True)
+        self.cross_attn_norm = nn.LayerNorm(
+            model_size, eps=1e-05, elementwise_affine=True
+        )
         self.cross_attn = MultiHeadCrossAttention(self.model_size, self.n_heads)
 
         # layer normalization before or after the feed forward network
@@ -325,9 +344,7 @@ class TransformerDecoderLayer(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
-    # def forward(self, dec_inputs, enc_outputs,
-    #             dec_self_attn_mask, dec_enc_attn_mask, impl='fast'):
-    def forward(self, decoder_input, encoder_output, self_attn_mask, impl='fast'):
+    def forward(self, decoder_input, encoder_output, self_attn_mask, impl="fast"):
         """
         dec_input: [tgt_len, batch_size, model_size]
         enc_outputs: [tgt_len, batch_size, model_size]
@@ -369,9 +386,7 @@ class TransformerDecoderLayer(nn.Module):
         return x
 
 
-if __name__ == '__main__':
-    # multihead_attn = MultiHeadSelfAttention(512, 64)
-
+if __name__ == "__main__":
     seq_len = 8
     batch_size = 64
     seq_len_k = 16 * 16
@@ -379,7 +394,6 @@ if __name__ == '__main__':
     test_input = torch.randn(seq_len, batch_size, 512)
     test_encoder_out = torch.randn(seq_len_k, batch_size, 512)
 
-    # multihead_attn = multihead_attn.cuda()
     test_input = test_input.cuda()
     test_encoder_out = test_encoder_out.cuda()
 
@@ -391,40 +405,15 @@ if __name__ == '__main__':
 
     # this command will copy all modules to cuda, including the layer norms (they were initialized in CPU)
     transformer_decoder_layer = transformer_decoder_layer.cuda()
-    self_attn_mask = torch.triu(test_input.new_ones(seq_len, seq_len), diagonal=1).byte()
+    self_attn_mask = torch.triu(
+        test_input.new_ones(seq_len, seq_len), diagonal=1
+    ).byte()
 
-    output = transformer_decoder_layer(test_input, test_encoder_out, self_attn_mask, impl='fast')
-    output_slow = transformer_decoder_layer(test_input, test_encoder_out, self_attn_mask, impl='slow')
+    output = transformer_decoder_layer(
+        test_input, test_encoder_out, self_attn_mask, impl="fast"
+    )
+    output_slow = transformer_decoder_layer(
+        test_input, test_encoder_out, self_attn_mask, impl="slow"
+    )
 
     print(output - output_slow)
-
-    # output_fast = multihead_attn(test_input, impl='fast')
-    # output_slow = multihead_attn(test_input, impl='slow')
-    #
-    # print(output_fast - output_slow)
-    # (output_fast + output_slow).sum().backward()
-    #
-    # num_iters = 30
-    # torch.cuda.profiler.start()
-    # torch.cuda.synchronize()
-    # start_time = time()
-    # for _ in range(num_iters):
-    #     output_fast = multihead_attn(test_input, impl='fast')
-    #     output_fast.sum().backward()
-    #     multihead_attn.zero_grad()
-    #
-    # torch.cuda.synchronize()
-    # stop_time = time()
-    # print(F"\nFast Self-Attn time {(stop_time - start_time) * 1000. / num_iters:.4f} ms")
-    #
-    # torch.cuda.profiler.start()
-    # torch.cuda.synchronize()
-    # start_time = time()
-    # for _ in range(num_iters):
-    #     output_slow = multihead_attn(test_input, impl='slow')
-    #     output_slow.sum().backward()
-    #     multihead_attn.zero_grad()
-    #
-    # torch.cuda.synchronize()
-    # stop_time = time()
-    # print(F"\nSlow Self-Attn time {(stop_time - start_time) * 1000. / num_iters:.4f} ms")
